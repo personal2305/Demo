@@ -9,3 +9,6 @@ lxml==5.2.1
 pdfminer.six==20221105
 spacy==3.7.4
 geopy==2.4.0
+langchain-openai==0.1.6
+langchain-community==0.0.30
+faiss-cpu==1.8.0

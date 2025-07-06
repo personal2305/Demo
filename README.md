@@ -58,3 +58,23 @@ python -m spacy download en_core_web_sm
 ```
 
 The entity extractor also leverages OpenStreetMap geocoding (via `geopy`). Ensure outbound Internet access is available or use `--no-entities` when running the CLI to skip geocoding.
+
+### Build the Vector Search Index
+
+After the Neo4j knowledge graph is populated, run:
+
+```bash
+export OPENAI_API_KEY="YOUR_OPENAI_KEY"
+python build_vector_index.py --neo4j-password your_password --out vector_index
+```
+
+This will compute OpenAI embeddings for each `Section` node and store a FAISS index in `vector_index/`.
+
+### Launch the Full Chatbot
+
+Set environment variables (or edit `app.py` defaults):
+```bash
+export NEO4J_PASSWORD=your_password
+export OPENAI_API_KEY=your_openai_key
+streamlit run app.py
+```

@@ -3,24 +3,33 @@ from typing import List, Dict
 
 import streamlit as st
 
+from mosdac_bot.qa_engine import QABot
+
+
 # ------------------------
 # Placeholder Answer Engine
 # ------------------------
 
-def get_answer(question: str, chat_history: List[Dict[str, str]]) -> str:
-    """Return an answer to the user's question.
+# Initialise QABot singleton and cache with Streamlit
+@st.cache_resource(allow_output_mutation=True)
+def _load_qa_bot():
+    try:
+        bot = QABot(
+            neo4j_uri=os.getenv("NEO4J_URI", "bolt://localhost:7687"),
+            neo4j_user=os.getenv("NEO4J_USER", "neo4j"),
+            neo4j_password=os.getenv("NEO4J_PASSWORD"),
+            vector_index_dir=os.getenv("VECTOR_INDEX_DIR", "vector_index"),
+            openai_model=os.getenv("OPENAI_MODEL", "gpt-3.5-turbo"),
+        )
+        return bot
+    except Exception as e:
+        st.error(f"Failed to load QA engine: {e}")
+        raise
 
-    This is currently a stub. In a future iteration this function will:
-        1. Retrieve relevant context from a MOSDAC knowledge graph / vector store.
-        2. Feed the context plus the conversation history into an LLM (e.g. OpenAI, LLama-cpp).
-    """
-    # TODO: Replace with real retrieval-augmented generation pipeline
-    # For now, we return a canned response so the chat UI can be demonstrated.
-    return (
-        "🚧 This is a placeholder response. In the full system, this area will "
-        "call the knowledge-graph-powered LLM to provide an accurate answer "
-        "to your MOSDAC query."
-    )
+
+def get_answer(question: str, chat_history: List[Dict[str, str]]) -> str:
+    qa_bot = _load_qa_bot()
+    return qa_bot.answer(question, chat_history)
 
 
 # ------------------------

@@ -39,3 +39,14 @@ streamlit run app.py
 * Replace the placeholder `get_answer` function with retrieval-augmented generation (RAG) powered by an LLM.
 * Add geospatial reasoning modules for spatially-aware Q&A.
 * Package the solution for deployment across other web portals.
+
+### Build the Knowledge Graph
+
+1. Ensure Neo4j is running locally (default bolt URI `bolt://localhost:7687`).
+2. Run the crawler and graph builder (replace `your_password`):
+
+```bash
+python crawl_and_build.py --neo4j-password your_password --max-pages 800
+```
+
+This will crawl the MOSDAC site, extract content, and populate Neo4j with `Page` and `Section` nodes.

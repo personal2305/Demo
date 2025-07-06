@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOSDAC AI Bot - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <i class="fas fa-satellite me-2"></i>MOSDAC AI Bot - Admin
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="/">
+                        <i class="fas fa-comments me-1"></i>Back to Chat
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <div class="row mt-4">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="#dashboard" class="list-group-item list-group-item-action active" 
+                       onclick="showSection('dashboard')">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                    <a href="#knowledge-graph" class="list-group-item list-group-item-action" 
+                       onclick="showSection('knowledge-graph')">
+                        <i class="fas fa-project-diagram me-2"></i>Knowledge Graph
+                    </a>
+                    <a href="#data-ingestion" class="list-group-item list-group-item-action" 
+                       onclick="showSection('data-ingestion')">
+                        <i class="fas fa-download me-2"></i>Data Ingestion
+                    </a>
+                    <a href="#system-logs" class="list-group-item list-group-item-action" 
+                       onclick="showSection('system-logs')">
+                        <i class="fas fa-file-alt me-2"></i>System Logs
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="col-md-9">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="content-section">
+                    <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 id="total-entities">0</h4>
+                                            <p class="card-text">Total Entities</p>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-cubes fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 id="total-relationships">0</h4>
+                                            <p class="card-text">Relationships</p>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-link fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 id="queries-today">0</h4>
+                                            <p class="card-text">Queries Today</p>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-comments fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 id="system-health">Good</h4>
+                                            <p class="card-text">System Health</p>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-heartbeat fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Entity Types Distribution</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="entity-types-chart">
+                                        <!-- Chart will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Recent Activity</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="recent-activity">
+                                        <!-- Activity log will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Knowledge Graph Section -->
+                <div id="knowledge-graph-section" class="content-section" style="display: none;">
+                    <h2><i class="fas fa-project-diagram me-2"></i>Knowledge Graph Management</h2>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Search Knowledge Graph</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-group mb-3">
+                                        <input type="text" id="kg-search-input" class="form-control" 
+                                               placeholder="Search entities...">
+                                        <button class="btn btn-primary" onclick="searchKnowledgeGraph()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                    <div id="kg-search-results">
+                                        <!-- Search results will appear here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Graph Statistics</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        <tbody id="kg-stats-table">
+                                            <!-- Stats will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Ingestion Section -->
+                <div id="data-ingestion-section" class="content-section" style="display: none;">
+                    <h2><i class="fas fa-download me-2"></i>Data Ingestion</h2>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Scrape Portal Content</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input type="url" id="portal-url" class="form-control" 
+                                           value="https://www.mosdac.gov.in" 
+                                           placeholder="Enter portal URL">
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-success w-100" onclick="scrapePortal()">
+                                        <i class="fas fa-spider me-2"></i>Start Scraping
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <div id="scraping-progress" style="display: none;">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                             role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <small class="text-muted">Scraping in progress...</small>
+                                </div>
+                                <div id="scraping-results"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- System Logs Section -->
+                <div id="system-logs-section" class="content-section" style="display: none;">
+                    <h2><i class="fas fa-file-alt me-2"></i>System Logs</h2>
+                    
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <h5>Application Logs</h5>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="refreshLogs()">
+                                <i class="fas fa-sync me-1"></i>Refresh
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="system-logs" class="log-container">
+                                <!-- Logs will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

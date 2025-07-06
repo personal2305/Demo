@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOSDAC AI Help Bot</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <!-- Sidebar -->
+            <div class="col-md-3 sidebar p-0">
+                <div class="sidebar-header p-3">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-satellite me-2"></i>
+                        MOSDAC AI Bot
+                    </h4>
+                    <small class="text-light">Satellite Data Assistant</small>
+                </div>
+                
+                <div class="sidebar-content p-3">
+                    <div class="quick-actions mb-4">
+                        <h6 class="text-white mb-3">Quick Actions</h6>
+                        <button class="btn btn-outline-light btn-sm w-100 mb-2 quick-action" 
+                                data-query="How to download satellite data?">
+                            <i class="fas fa-download me-2"></i>Download Data
+                        </button>
+                        <button class="btn btn-outline-light btn-sm w-100 mb-2 quick-action" 
+                                data-query="Show me oceansat data products">
+                            <i class="fas fa-water me-2"></i>Ocean Data
+                        </button>
+                        <button class="btn btn-outline-light btn-sm w-100 mb-2 quick-action" 
+                                data-query="What satellites are available?">
+                            <i class="fas fa-satellite-dish me-2"></i>Satellites
+                        </button>
+                        <button class="btn btn-outline-light btn-sm w-100 mb-2 quick-action" 
+                                data-query="Help with navigation">
+                            <i class="fas fa-compass me-2"></i>Navigation
+                        </button>
+                    </div>
+                    
+                    <div class="knowledge-stats">
+                        <h6 class="text-white mb-3">Knowledge Base</h6>
+                        <div class="stat-item">
+                            <span class="text-light">Entities:</span>
+                            <span id="entity-count" class="badge bg-primary">Loading...</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="text-light">Relationships:</span>
+                            <span id="relationship-count" class="badge bg-success">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Chat Area -->
+            <div class="col-md-9 main-content p-0">
+                <!-- Header -->
+                <div class="chat-header p-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">AI Assistant</h5>
+                            <small class="text-muted">
+                                <span id="connection-status" class="badge bg-success">
+                                    <i class="fas fa-circle me-1"></i>Connected
+                                </span>
+                            </small>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-secondary btn-sm me-2" onclick="clearChat()">
+                                <i class="fas fa-broom me-1"></i>Clear
+                            </button>
+                            <a href="/admin" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-cog me-1"></i>Admin
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messages Area -->
+                <div class="messages-container" id="messages-container">
+                    <div class="welcome-message">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                                <h4>Welcome to MOSDAC AI Help Bot!</h4>
+                                <p class="text-muted">
+                                    I'm here to help you with satellite data queries, download assistance, 
+                                    and navigation through the MOSDAC portal. Ask me anything about:
+                                </p>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled text-start">
+                                            <li><i class="fas fa-check text-success me-2"></i>Satellite data products</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Download procedures</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Data specifications</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="list-unstyled text-start">
+                                            <li><i class="fas fa-check text-success me-2"></i>Geospatial queries</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Technical support</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Portal navigation</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Input Area -->
+                <div class="input-container p-3 border-top">
+                    <div class="input-group">
+                        <input type="text" 
+                               id="message-input" 
+                               class="form-control form-control-lg" 
+                               placeholder="Ask me about satellite data, downloads, or any MOSDAC query..."
+                               autocomplete="off">
+                        <button class="btn btn-primary btn-lg" id="send-button" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="suggestions-container mt-2" id="suggestions-container">
+                        <!-- Dynamic suggestions will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Map Modal -->
+    <div class="modal fade" id="mapModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-map me-2"></i>Spatial Data Visualization
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="map-content">
+                        <!-- Map will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>

@@ -50,3 +50,11 @@ python crawl_and_build.py --neo4j-password your_password --max-pages 800
 ```
 
 This will crawl the MOSDAC site, extract content, and populate Neo4j with `Page` and `Section` nodes.
+
+After installing requirements, download the small English spaCy model (needed for entity extraction):
+
+```bash
+python -m spacy download en_core_web_sm
+```
+
+The entity extractor also leverages OpenStreetMap geocoding (via `geopy`). Ensure outbound Internet access is available or use `--no-entities` when running the CLI to skip geocoding.

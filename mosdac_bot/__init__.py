@@ -8,9 +8,11 @@ except PackageNotFoundError:
 # Re-export core APIs
 from .crawler import crawl_site, Page
 from .graph_builder import build_graph
+from .entities import EntityExtractor
 
 __all__ = [
     "crawl_site",
     "Page",
     "build_graph",
+    "EntityExtractor",
 ]
